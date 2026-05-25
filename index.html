@@ -521,10 +521,79 @@
     <button id="mainSendBtn" class="main-btn" onclick="processReport()">SPEICHERN & SENDEN</button>
 </div>
 
+
 <div class="dashboard-card" id="adminPanel">
-    <div class="header">
-        <h1 style="font-size:28px; margin-bottom:5px;">APG Live Dashboard</h1>
-        <p id="adminUserDisplay" style="color:var(--primary); font-size:16px; font-weight:bold;"></p>
+
+    <style>
+        .dashboard-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:30px;
+            margin-bottom:25px;
+            flex-wrap:wrap;
+        }
+
+        .dashboard-header{
+            flex:1;
+            text-align:right;
+        }
+
+        .rights-box{
+            width:420px;
+            margin:0;
+        }
+
+        @media(max-width:1100px){
+
+            .dashboard-top{
+                flex-direction:column;
+            }
+
+            .rights-box{
+                width:100%;
+            }
+
+            .dashboard-header{
+                text-align:left;
+            }
+        }
+    </style>
+
+    <div class="dashboard-top">
+
+        <div id="rightsManagementBox" style="display:none;">
+            <div class="rights-box">
+                <h3 style="color:var(--primary); margin-top:0;">
+                    Rechte-Verwaltung
+                </h3>
+
+                <p id="currentManagersList"
+                   style="font-size:14px; color:#94a3b8;">
+                </p>
+
+                <select id="rightsSelect" style="margin-top:10px;"></select>
+
+                <button class="main-btn"
+                        style="margin-top:10px; padding:12px;"
+                        onclick="grantSuperManagerRights()">
+                    RECHTE VERGEBEN
+                </button>
+            </div>
+        </div>
+
+        <div class="header dashboard-header">
+            <h1 style="font-size:28px; margin-bottom:5px;">
+                APG Live Dashboard
+            </h1>
+
+            <p id="adminUserDisplay"
+               style="color:var(--primary);
+                      font-size:16px;
+                      font-weight:bold;">
+            </p>
+        </div>
+
     </div>
 
     <div class="live-control-panel">
@@ -535,41 +604,47 @@
                 <button class="live-filter" onclick="filterReports('B', event)">B</button>
                 <button class="live-filter" onclick="filterReports('C', event)">C</button>
             </div>
-            <button class="refresh-btn" onclick="loadAdminDashboard()">AKTUALISIEREN</button>
+
+            <button class="refresh-btn" onclick="loadAdminDashboard()">
+                AKTUALISIEREN
+            </button>
         </div>
 
         <div class="manager-row">
             <select id="managerUser"></select>
+
             <select id="managerRole">
                 <option>Rolle auswaehlen</option>
                 <option>Super Manager</option>
                 <option>Schichtleiter</option>
                 <option>Mitarbeiter</option>
             </select>
+
             <select id="managerSchicht">
                 <option>Schicht zuweisen</option>
                 <option>A</option>
                 <option>B</option>
                 <option>C</option>
             </select>
-            <button class="save-manager-btn" onclick="saveManagerSettings()">SPEICHERN</button>
+
+            <button class="save-manager-btn"
+                    onclick="saveManagerSettings()">
+                SPEICHERN
+            </button>
         </div>
     </div>
 
-    <div id="rightsManagementBox" style="display:none;">
-        <div class="rights-box">
-            <h3 style="color:var(--primary); margin-top:0;">Rechte-Verwaltung</h3>
-            <p id="currentManagersList" style="font-size:14px; color:#94a3b8;"></p>
-            <select id="rightsSelect" style="margin-top:10px;"></select>
-            <button class="main-btn" style="margin-top:10px; padding:12px;" onclick="grantSuperManagerRights()">RECHTE VERGEBEN</button>
-        </div>
+    <div id="dashboardLoading"
+         style="text-align:center; padding:20px; color:#38bdf8;">
+        Lade Live-Daten...
     </div>
 
-    <div id="dashboardLoading" style="text-align:center; padding:20px; color:#38bdf8;">Lade Live-Daten...</div>
     <div id="reportsContainer" class="reports-grid"></div>
+
 </div>
 
 <div id="workerOverlay">
+
     <div class="overlay-content">
         <h3 style="color:var(--primary); font-size:20px; margin-top:0;">Mitarbeiter waehlen</h3>
         <div id="workerList"></div>
@@ -854,18 +929,34 @@ async function loadAdminDashboard() {
 }
 
 function filterReports(schicht, event) {
+
     const boxes = document.querySelectorAll(".report-box");
+
     boxes.forEach(box => {
-        const boxSchicht = box.getAttribute("data-schicht") || "";
-        if (schicht === "ALLE" || boxSchicht.includes(schicht)) {
+
+        const boxSchicht =
+            (box.getAttribute("data-schicht") || "").trim();
+
+        if (schicht === "ALLE") {
+
             box.style.display = "block";
+
+        } else if (boxSchicht === schicht) {
+
+            box.style.display = "block";
+
         } else {
+
             box.style.display = "none";
         }
+
     });
 
-    document.querySelectorAll(".live-filter").forEach(b => b.classList.remove("active"));
-    if (event && event.target) {
+    document
+        .querySelectorAll(".live-filter")
+        .forEach(btn => btn.classList.remove("active"));
+
+    if(event && event.target){
         event.target.classList.add("active");
     }
 }
